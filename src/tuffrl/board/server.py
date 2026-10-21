@@ -7,6 +7,7 @@ import mimetypes
 import os
 import signal
 import socket
+import socketserver
 import sys
 import threading
 import time
@@ -125,13 +126,24 @@ class BoardHandler(BaseHTTPRequestHandler):
             return
 
 
+class _Server(ThreadingHTTPServer):
+    daemon_threads = True
+
+    def server_bind(self) -> None:
+        # HTTPServer.server_bind() looks up the host's fully qualified name, which blocks for
+        # many seconds where reverse DNS is slow (GitHub's macOS runners, some offline
+        # machines). Nothing here uses that name.
+        socketserver.TCPServer.server_bind(self)
+        host, port = self.server_address[:2]
+        self.server_name = str(host)
+        self.server_port = port
+
+
 def _bind(host: str, port: int, handler: type[BaseHTTPRequestHandler], tries: int = 20) -> ThreadingHTTPServer:
     last_error: OSError | None = None
     for candidate in range(port, port + tries):
         try:
-            server = ThreadingHTTPServer((host, candidate), handler)
-            server.daemon_threads = True
-            return server
+            return _Server((host, candidate), handler)
         except OSError as error:  # port taken
             last_error = error
     raise OSError(f"no free port in {port}..{port + tries - 1}") from last_error

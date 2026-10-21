@@ -13,6 +13,7 @@ from helpers import quiet_run
 
 from tuffrl.board import ensure_board, stop_board
 from tuffrl.board.lock import read_lock
+from tuffrl.board.server import BoardHandler, _bind
 
 
 def free_port() -> int:
@@ -72,3 +73,12 @@ def test_stop_clears_the_lock(tmp_path):
     while read_lock(str(tmp_path)) and time.time() < deadline:
         time.sleep(0.1)
     assert read_lock(str(tmp_path)) is None
+
+
+def test_binding_does_not_wait_for_reverse_dns(monkeypatch):
+    def lookup(*_args):
+        raise AssertionError("the board looked up its host name")
+
+    monkeypatch.setattr(socket, "getfqdn", lookup)
+    server = _bind("127.0.0.1", free_port(), BoardHandler)
+    server.server_close()
