@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+      - run: uvx ruff check .
+
+  test:
+    name: test (${{ matrix.os }}, Python ${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python: ["3.10", "3.11", "3.12", "3.13"]
+        include:
+          - os: macos-latest
+            python: "3.12"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install -e ".[dev,system]"
+      - run: python -m pytest -q
+
+  package:
+    name: board page and package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/build-board
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+      - run: uv build
+      - name: The wheel ships the board page
+        run: |
+          python3 - <<'PY'
+          import glob, zipfile
+          [wheel] = glob.glob("dist/*.whl")
+          names = zipfile.ZipFile(wheel).namelist()
+          assert "tuffrl/board/static/index.html" in names, names
+          assert any(name.startswith("tuffrl/board/static/assets/") for name in names), names
+          print(wheel, len(names), "files")
+          PY
+      - name: The installed board serves its page
+        run: |
+          python3 -m venv /tmp/smoke
+          /tmp/smoke/bin/pip install dist/*.whl
+          mkdir -p /tmp/smoke-logs
+          /tmp/smoke/bin/tuff-rl board /tmp/smoke-logs --no-browser --port 6066 &
+          for attempt in $(seq 1 40); do curl -sf http://127.0.0.1:6066/api/health && break; sleep 0.5; done
+          curl -sf http://127.0.0.1:6066/ | grep -q '<title>tuff-rl</title>'
+          /tmp/smoke/bin/tuff-rl stop /tmp/smoke-logs

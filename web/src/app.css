@@ -1,0 +1,64 @@
+:root {
+  --board-sidebar: 296px;
+  --board-header: 52px;
+  --board-radius: 12px;
+  --board-line: var(--tx-border-color-lighter);
+  --board-muted: var(--tx-text-color-secondary);
+  --board-surface: var(--tx-bg-color);
+  --board-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--tx-font-family);
+  font-size: 13px;
+  line-height: 1.45;
+  background: var(--tx-bg-color-page);
+  color: var(--tx-text-color-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font: inherit;
+}
+
+.mono {
+  font-family: var(--board-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.muted {
+  color: var(--board-muted);
+}
+
+/* A run's color, as a small filled circle. */
+.swatch {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--swatch);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--swatch) 18%, transparent);
+}
+
+/* TxSwitch draws its off track in --tx-fill-color, which vanishes on the light page background. */
+.board .tuff-switch {
+  --tuff-switch-track-color: var(--tx-fill-color-darker);
+}

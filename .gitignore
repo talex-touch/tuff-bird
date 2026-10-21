@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+dist/
+build/
+.pytest_cache/
+.ruff_cache/
+logs/
+runs/
+web/node_modules/
+web/dist/
+src/tuffrl/board/static/
+.DS_Store

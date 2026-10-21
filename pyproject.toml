@@ -1,0 +1,66 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tuff-rl"
+dynamic = ["version"]
+description = "Training logs as TensorBoard event files, and a live board that follows them"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "TalexDreamSoul" }]
+keywords = ["reinforcement-learning", "tensorboard", "tfevents", "experiment-tracking", "training-dashboard", "machine-learning"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Web Environment",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "Operating System :: MacOS",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Scientific/Engineering :: Visualization",
+]
+# The writer, the reader and the board run on the standard library alone, so the package
+# installs on any training machine without touching its environment.
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/talex-touch/tuff-rl"
+Repository = "https://github.com/talex-touch/tuff-rl"
+Issues = "https://github.com/talex-touch/tuff-rl/issues"
+Changelog = "https://github.com/talex-touch/tuff-rl/blob/main/CHANGELOG.md"
+
+[project.optional-dependencies]
+# Process and machine metrics; without it the board records only what the standard library sees.
+system = ["psutil>=5.9"]
+dev = ["pytest>=8.0", "tensorboard>=2.15", "tensorboardX>=2.6"]
+
+[project.scripts]
+tuff-rl = "tuffrl.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+# Built from web/ (pnpm build) before packaging; the release workflow checks it is there.
+tuffrl = ["board/static/**/*"]
+
+[tool.setuptools.dynamic]
+version = { attr = "tuffrl.__version__" }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 160
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "W", "I", "UP", "B", "SIM", "ARG", "A", "N", "BLE"]

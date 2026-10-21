@@ -1,0 +1,8 @@
+allowBuilds:
+  # @talex-touch/utils lists electron as a dependency; the board never runs it, so skip the
+  # 100+ MB binary download its install script would start.
+  electron: false
+  esbuild: true
+  vue-demi: true
+minimumReleaseAgeExclude:
+  - '@talex-touch/tuffex@0.9.0'
