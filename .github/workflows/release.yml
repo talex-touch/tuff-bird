@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v7
       - name: The tag matches the package version
         run: |
-          version=$(python3 -c "import re; print(re.search(r'__version__ = \"(.+?)\"', open('src/tuffrl/__init__.py').read()).group(1))")
+          version=$(python3 -c "import re; print(re.search(r'__version__ = \"(.+?)\"', open('src/tuffbird/__init__.py').read()).group(1))")
           if [ "v$version" != "$GITHUB_REF_NAME" ]; then
             echo "::error::tag $GITHUB_REF_NAME does not match the package version $version"
             exit 1
@@ -30,7 +30,7 @@ jobs:
           import glob, zipfile
           [wheel] = glob.glob("dist/*.whl")
           names = zipfile.ZipFile(wheel).namelist()
-          assert "tuffrl/board/static/index.html" in names, names
+          assert "tuffbird/board/static/index.html" in names, names
           print(wheel, len(names), "files")
           PY
       - uses: actions/upload-artifact@v7
@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/project/tuff-rl/
+      url: https://pypi.org/project/tuff-bird/
     permissions:
       id-token: write
     steps:

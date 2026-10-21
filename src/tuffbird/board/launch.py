@@ -37,7 +37,7 @@ def is_remote_session() -> bool:
 
 
 def can_open_browser() -> bool:
-    override = os.environ.get("TUFFRL_OPEN_BROWSER")
+    override = os.environ.get("TUFFBIRD_OPEN_BROWSER")
     if override is not None:
         return override.strip().lower() not in ("0", "false", "no", "off", "")
     if is_remote_session() or os.environ.get("CI"):
@@ -57,7 +57,7 @@ def _spawn(logdir: str, host: str, port: int) -> None:
     else:
         kwargs["start_new_session"] = True  # the board outlives the training process
     subprocess.Popen(
-        [sys.executable, "-m", "tuffrl", "board", os.path.abspath(logdir), "--host", host, "--port", str(port), "--no-browser"],
+        [sys.executable, "-m", "tuffbird", "board", os.path.abspath(logdir), "--host", host, "--port", str(port), "--no-browser"],
         **kwargs,
     )
     log.close()
@@ -93,8 +93,8 @@ def ensure_board(
     announce: bool = True,
 ) -> str | None:
     """Returns the URL of the board serving ``logdir``, starting one when none is running."""
-    port = port or int(os.environ.get("TUFFRL_BOARD_PORT", DEFAULT_PORT))
-    host = os.environ.get("TUFFRL_BOARD_HOST", host)
+    port = port or int(os.environ.get("TUFFBIRD_BOARD_PORT", DEFAULT_PORT))
+    host = os.environ.get("TUFFBIRD_BOARD_HOST", host)
     info = read_lock(logdir)
     started = False
     if not (info and _healthy(info, logdir)):
@@ -116,15 +116,15 @@ def ensure_board(
                 _release_start(logdir)
     if not info:
         if announce:
-            print(f"[tuffrl] the board did not start; see {os.path.join(logdir, STATE_DIR, 'board.log')}", file=sys.stderr)
+            print(f"[tuffbird] the board did not start; see {os.path.join(logdir, STATE_DIR, 'board.log')}", file=sys.stderr)
         return None
     url = str(info["url"])
     if announce:
-        print(f"[tuffrl] board: {url}  (logdir {os.path.abspath(logdir)})", file=sys.stderr, flush=True)
+        print(f"[tuffbird] board: {url}  (logdir {os.path.abspath(logdir)})", file=sys.stderr, flush=True)
         if is_remote_session():
             board_port = info.get("port")
             print(
-                f"[tuffrl] from your own machine: ssh -N -L {board_port}:127.0.0.1:{board_port} "
+                f"[tuffbird] from your own machine: ssh -N -L {board_port}:127.0.0.1:{board_port} "
                 f"{getpass.getuser()}@{socket.gethostname()}  then open http://127.0.0.1:{board_port}",
                 file=sys.stderr, flush=True,
             )

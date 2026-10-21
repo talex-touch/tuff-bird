@@ -7,7 +7,7 @@ import json
 import os
 from typing import Any
 
-STATE_DIR = ".tuffrl"
+STATE_DIR = ".tuffbird"
 LOCK_NAME = "board.json"
 
 

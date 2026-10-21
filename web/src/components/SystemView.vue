@@ -7,7 +7,7 @@ import ChartCard from './ChartCard.vue'
 
 const zh = navigator.language.toLowerCase().startsWith('zh')
 
-// Names for the metrics tuffrl samples; anything else under sys/ keeps its tag.
+// Names for the metrics tuffbird samples; anything else under sys/ keeps its tag.
 const NAMES: Record<string, [zh: string, en: string]> = {
   process_cpu_percent: ['进程 CPU（%）', 'Process CPU (%)'],
   cpu_percent: ['整机 CPU（%）', 'System CPU (%)'],

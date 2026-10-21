@@ -42,7 +42,7 @@ class EventFileWriter:
         self._wake = threading.Event()
         self._closed = False
         self._flush_secs = flush_secs
-        self._thread = threading.Thread(target=self._run, name="tuffrl-writer", daemon=True)
+        self._thread = threading.Thread(target=self._run, name="tuffbird-writer", daemon=True)
         self._thread.start()
 
     def add(self, event: bytes) -> None:

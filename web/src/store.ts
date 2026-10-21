@@ -240,7 +240,7 @@ export async function connect(): Promise<void> {
 
 // ------------------------------------------------------------------ view settings
 
-const PREFS_KEY = 'tuffrl:prefs'
+const PREFS_KEY = 'tuffbird:prefs'
 
 function loadPrefs(): Record<string, unknown> {
   try {

@@ -1,4 +1,4 @@
-"""``tuff-rl board <logdir>`` and ``tuff-rl stop <logdir>``."""
+"""``tuff-bird board <logdir>`` and ``tuff-bird stop <logdir>``."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from .board.launch import DEFAULT_PORT, can_open_browser, stop_board
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="tuff-rl", description="Live board for TensorBoard event files.")
+    parser = argparse.ArgumentParser(prog="tuff-bird", description="Live board for TensorBoard event files.")
     commands = parser.add_subparsers(dest="command", required=True)
 
     board = commands.add_parser("board", help="serve the board for a log directory in the foreground")
@@ -24,7 +24,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.command == "stop":
         stopped = stop_board(args.logdir)
-        print("[tuffrl] stopped" if stopped else "[tuffrl] no board is serving that directory")
+        print("[tuffbird] stopped" if stopped else "[tuffbird] no board is serving that directory")
         return 0 if stopped else 1
 
     from .board.server import serve

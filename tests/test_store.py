@@ -8,8 +8,8 @@ import time
 import pytest
 from helpers import quiet_run
 
-from tuffrl.board.store import IDLE_AFTER_SECS, Store
-from tuffrl.events import discover_runs
+from tuffbird.board.store import IDLE_AFTER_SECS, Store
+from tuffbird.events import discover_runs
 
 
 def finished_run(logdir, name, status):

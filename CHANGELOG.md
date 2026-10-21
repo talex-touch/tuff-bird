@@ -1,12 +1,24 @@
 # Changelog
 
-All notable changes to tuff-rl are recorded here. The format follows
+All notable changes to tuff-bird are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow
 [Semantic Versioning](https://semver.org/).
 
-## [0.1.0] - 2026-10-20
+## [0.1.1] - 2026-10-21
 
-The first release.
+The project is renamed to tuff-bird. The tuff-rl 0.1.0 release stays on PyPI as it was
+published; install tuff-bird from here on.
+
+### Changed
+
+- The package, the import name, the command and the environment variables take the new name:
+  `pip install tuff-bird`, `import tuffbird`, `tuff-bird board`, and `TUFFBIRD_*` in place of
+  `TUFFRL_*`. The state directory is now `.tuffbird`.
+- The repository moved to `talex-touch/tuff-bird`; the old links redirect.
+
+## [0.1.0] - 2026-10-21
+
+The first release, published under the name tuff-rl.
 
 ### Added
 
@@ -22,4 +34,5 @@ The first release.
 - `tuff-rl board` and `tuff-rl stop` on the command line.
 - `examples/cartpole.py`: REINFORCE on CartPole in plain Python, six runs in parallel.
 
-[0.1.0]: https://github.com/talex-touch/tuff-rl/releases/tag/v0.1.0
+[0.1.1]: https://github.com/talex-touch/tuff-bird/releases/tag/v0.1.1
+[0.1.0]: https://github.com/talex-touch/tuff-bird/releases/tag/v0.1.0

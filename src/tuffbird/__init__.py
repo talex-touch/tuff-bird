@@ -1,7 +1,7 @@
-"""tuff-rl: training logs as TensorBoard event files, with a live local board that starts itself.
+"""tuff-bird: training logs as TensorBoard event files, with a live local board that starts itself.
 
-    import tuffrl
-    run = tuffrl.init(logdir="logs", name="sac-seed1", group="sac", config={"lr": 3e-4})
+    import tuffbird
+    run = tuffbird.init(logdir="logs", name="sac-seed1", group="sac", config={"lr": 3e-4})
     run.log({"train/loss": loss, "eval/return": ret}, step=step)
     run.finish()
 """
@@ -11,7 +11,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 from .board import ensure_board  # noqa: E402 - needs __version__ above
 from .compat import SummaryWriter  # noqa: E402
@@ -36,7 +36,7 @@ def init(
 def log(metrics: Mapping[str, Any], step: int | None = None) -> None:
     """Logs to the run started by :func:`init`."""
     if _current is None:
-        raise RuntimeError("call tuffrl.init() first")
+        raise RuntimeError("call tuffbird.init() first")
     _current.log(metrics, step=step)
 
 

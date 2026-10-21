@@ -13,7 +13,7 @@ const connection = computed(() => board.connection)
         <path d="M3 17.5 8.5 11l4 3.5L21 5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
         <circle cx="21" cy="5" r="2" fill="currentColor" />
       </svg>
-      <span class="header__name">tuff-rl</span>
+      <span class="header__name">tuff-bird</span>
     </div>
     <span class="header__logdir mono" :title="board.logdir"><bdi>{{ board.logdir }}</bdi></span>
     <div class="header__status">

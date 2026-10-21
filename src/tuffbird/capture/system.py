@@ -52,7 +52,7 @@ class SystemSampler:
         self._process = psutil.Process() if psutil else None
         self._last_cpu = self._cpu_seconds()
         self._last_wall = time.time()
-        self._thread = threading.Thread(target=self._run, name="tuffrl-system", daemon=True)
+        self._thread = threading.Thread(target=self._run, name="tuffbird-system", daemon=True)
         self._thread.start()
 
     @staticmethod

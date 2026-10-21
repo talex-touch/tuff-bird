@@ -24,7 +24,7 @@ STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
 POLL_SECS = 0.5
 KEEPALIVE_SECS = 15.0
 
-_MISSING_PAGE = b"""<!doctype html><meta charset="utf-8"><title>tuff-rl</title>
+_MISSING_PAGE = b"""<!doctype html><meta charset="utf-8"><title>tuff-bird</title>
 <p>The board page has not been built. Run <code>pnpm install &amp;&amp; pnpm build</code> in
 <code>web/</code>; the API is up at <a href="/api/snapshot">/api/snapshot</a>.</p>"""
 
@@ -49,7 +49,7 @@ def _sanitize(payload: Any) -> Any:
 
 
 class BoardHandler(BaseHTTPRequestHandler):
-    server_version = f"tuff-rl/{__version__}"
+    server_version = f"tuff-bird/{__version__}"
     store: Store  # set on the subclass made per server
 
     def log_message(self, format: str, *args: Any) -> None:  # noqa: A002 - signature from the base class
@@ -167,9 +167,9 @@ def serve(logdir: str, *, host: str = "127.0.0.1", port: int = 6066, announce: b
             try:
                 store.scan()
             except Exception as error:  # noqa: BLE001 - a bad file must not stop the board
-                print(f"[tuffrl] scan failed: {error}", file=sys.stderr)
+                print(f"[tuffbird] scan failed: {error}", file=sys.stderr)
 
-    watcher = threading.Thread(target=watch, name="tuffrl-watch", daemon=True)
+    watcher = threading.Thread(target=watch, name="tuffbird-watch", daemon=True)
     watcher.start()
 
     def shutdown(*_args: Any) -> None:
@@ -178,7 +178,7 @@ def serve(logdir: str, *, host: str = "127.0.0.1", port: int = 6066, announce: b
 
     signal.signal(signal.SIGTERM, shutdown)
     if announce:
-        print(f"[tuffrl] board for {store.logdir}: {url}", flush=True)
+        print(f"[tuffbird] board for {store.logdir}: {url}", flush=True)
     try:
         server.serve_forever(poll_interval=0.5)
     except KeyboardInterrupt:

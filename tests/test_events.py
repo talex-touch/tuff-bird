@@ -6,9 +6,9 @@ import struct
 
 import pytest
 
-from tuffrl.events.crc32c import _crc32c_python, crc32c, masked_crc32c
-from tuffrl.events.records import CorruptRecordError, RecordReader, encode_record
-from tuffrl.events.schema import (
+from tuffbird.events.crc32c import _crc32c_python, crc32c, masked_crc32c
+from tuffbird.events.records import CorruptRecordError, RecordReader, encode_record
+from tuffbird.events.schema import (
     HParamsEnd,
     HParamsStart,
     Scalar,
@@ -28,7 +28,7 @@ def test_crc32c_matches_the_standard_check_value():
 
 def test_masked_crc_matches_tensorboard():
     stub = pytest.importorskip("tensorboard.compat.tensorflow_stub.pywrap_tensorflow")
-    for data in (b"", b"tuff-rl", struct.pack("<Q", 1234), bytes(range(256))):
+    for data in (b"", b"tuff-bird", struct.pack("<Q", 1234), bytes(range(256))):
         assert masked_crc32c(data) == stub.masked_crc32c(data)
 
 

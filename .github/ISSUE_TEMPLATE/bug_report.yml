@@ -18,8 +18,8 @@ body:
   - type: input
     id: version
     attributes:
-      label: tuff-rl version
-      placeholder: python -c "import tuffrl; print(tuffrl.__version__)"
+      label: tuff-bird version
+      placeholder: python -c "import tuffbird; print(tuffbird.__version__)"
     validations:
       required: true
   - type: input
@@ -31,5 +31,5 @@ body:
     id: log
     attributes:
       label: Board log
-      description: The contents of <logdir>/.tuffrl/board.log, if the board is involved.
+      description: The contents of <logdir>/.tuffbird/board.log, if the board is involved.
       render: text

@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from tuffrl import Run
-from tuffrl.events import Event, RunReader, discover_runs
+from tuffbird import Run
+from tuffbird.events import Event, RunReader, discover_runs
 
 
 def quiet_run(logdir, name, **options) -> Run:

@@ -42,7 +42,7 @@ class OutputCapture:
         self._originals = (sys.stdout, sys.stderr)
         sys.stdout = _Tee(sys.stdout, lambda text: self._append("stdout", text))  # type: ignore[assignment]
         sys.stderr = _Tee(sys.stderr, lambda text: self._append("stderr", text))  # type: ignore[assignment]
-        self._thread = threading.Thread(target=self._run, name="tuffrl-output", daemon=True)
+        self._thread = threading.Thread(target=self._run, name="tuffbird-output", daemon=True)
         self._thread.start()
 
     def _append(self, stream: str, text: str) -> None:

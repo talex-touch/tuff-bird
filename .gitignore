@@ -10,5 +10,5 @@ logs/
 runs/
 web/node_modules/
 web/dist/
-src/tuffrl/board/static/
+src/tuffbird/board/static/
 .DS_Store

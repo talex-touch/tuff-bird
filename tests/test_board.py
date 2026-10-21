@@ -11,9 +11,9 @@ from urllib.request import urlopen
 import pytest
 from helpers import quiet_run
 
-from tuffrl.board import ensure_board, stop_board
-from tuffrl.board.lock import read_lock
-from tuffrl.board.server import BoardHandler, _bind
+from tuffbird.board import ensure_board, stop_board
+from tuffbird.board.lock import read_lock
+from tuffbird.board.server import BoardHandler, _bind
 
 
 def free_port() -> int:
@@ -33,7 +33,7 @@ def board(tmp_path):
     run.log({"loss": 0.5}, step=0)
     run.finish()
     url = ensure_board(str(tmp_path), port=free_port(), open_browser=False, announce=False)
-    assert url, (tmp_path / ".tuffrl" / "board.log").read_text()
+    assert url, (tmp_path / ".tuffbird" / "board.log").read_text()
     yield url
     stop_board(str(tmp_path))
     deadline = time.time() + 5
@@ -52,7 +52,7 @@ def test_board_serves_the_log_directory(board, tmp_path):
     assert [point[:2] for point in snapshot["scalars"]["run"]["loss"]] == [[0, 0.5]]
 
     with urlopen(f"{board}/", timeout=5) as response:  # noqa: S310
-        assert b"tuff-rl" in response.read()
+        assert b"tuff-bird" in response.read()
 
 
 def test_a_second_script_joins_the_running_board(board, tmp_path):

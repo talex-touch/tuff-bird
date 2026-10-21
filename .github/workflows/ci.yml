@@ -53,8 +53,8 @@ jobs:
           import glob, zipfile
           [wheel] = glob.glob("dist/*.whl")
           names = zipfile.ZipFile(wheel).namelist()
-          assert "tuffrl/board/static/index.html" in names, names
-          assert any(name.startswith("tuffrl/board/static/assets/") for name in names), names
+          assert "tuffbird/board/static/index.html" in names, names
+          assert any(name.startswith("tuffbird/board/static/assets/") for name in names), names
           print(wheel, len(names), "files")
           PY
       - name: The installed board serves its page
@@ -62,7 +62,7 @@ jobs:
           python3 -m venv /tmp/smoke
           /tmp/smoke/bin/pip install dist/*.whl
           mkdir -p /tmp/smoke-logs
-          /tmp/smoke/bin/tuff-rl board /tmp/smoke-logs --no-browser --port 6066 &
+          /tmp/smoke/bin/tuff-bird board /tmp/smoke-logs --no-browser --port 6066 &
           for attempt in $(seq 1 40); do curl -sf http://127.0.0.1:6066/api/health && break; sleep 0.5; done
-          curl -sf http://127.0.0.1:6066/ | grep -q '<title>tuff-rl</title>'
-          /tmp/smoke/bin/tuff-rl stop /tmp/smoke-logs
+          curl -sf http://127.0.0.1:6066/ | grep -q '<title>tuff-bird</title>'
+          /tmp/smoke/bin/tuff-bird stop /tmp/smoke-logs

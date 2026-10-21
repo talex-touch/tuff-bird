@@ -1,4 +1,4 @@
-"""REINFORCE on CartPole in plain Python, logged with tuffrl.
+"""REINFORCE on CartPole in plain Python, logged with tuffbird.
 
     python examples/cartpole.py              # two learning rates x three seeds, in parallel
     python examples/cartpole.py --seeds 1    # one run per learning rate
@@ -18,7 +18,7 @@ import subprocess
 import sys
 import time
 
-import tuffrl
+import tuffbird
 
 
 class CartPole:
@@ -63,7 +63,7 @@ def sigmoid(z: float) -> float:
 
 
 def train(lr: float, seed: int, episodes: int, gamma: float, pace: float, logdir: str) -> None:
-    run = tuffrl.init(
+    run = tuffbird.init(
         logdir=logdir,
         group=f"cartpole/lr-{lr:g}",
         name=f"seed-{seed}",

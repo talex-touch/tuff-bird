@@ -98,7 +98,7 @@ class Run:
         self._writer = EventFileWriter(self.dir, flush_secs=flush_secs)
         self._writer.add(hparams_start_event(self.start_time, self.config, self.group))
         self.board_url: str | None = None
-        if board and os.environ.get("TUFFRL_BOARD", "1") != "0" and _is_rank_zero():
+        if board and os.environ.get("TUFFBIRD_BOARD", "1") != "0" and _is_rank_zero():
             self.board_url = ensure_board(self.logdir, open_browser=open_browser)
         self._output = OutputCapture(self._emit_output) if capture_output else None
         self._system = SystemSampler(self._emit_system, interval=system_interval) if system_metrics else None

@@ -5,8 +5,8 @@ from __future__ import annotations
 import pytest
 from helpers import quiet_run, read_events, values_of
 
-from tuffrl import SummaryWriter
-from tuffrl.events import Media, Scalar, Text
+from tuffbird import SummaryWriter
+from tuffbird.events import Media, Scalar, Text
 
 pytest.importorskip("tensorboard")
 from tensorboard.backend.event_processing.event_accumulator import EventAccumulator  # noqa: E402

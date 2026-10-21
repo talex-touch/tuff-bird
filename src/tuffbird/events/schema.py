@@ -2,7 +2,7 @@
 
 Field numbers follow ``tensorflow/core/util/event.proto``,
 ``tensorflow/core/framework/summary.proto`` and ``tensor.proto``, and the hparams plugin's
-``plugin_data.proto``. Only what tuff-rl writes and what common writers (TensorFlow, PyTorch's
+``plugin_data.proto``. Only what tuff-bird writes and what common writers (TensorFlow, PyTorch's
 ``SummaryWriter``, tensorboardX, Stable-Baselines3) produce is decoded; everything else is
 skipped field by field.
 """

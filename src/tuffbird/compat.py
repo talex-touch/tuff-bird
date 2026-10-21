@@ -40,7 +40,7 @@ class SummaryWriter:
         self.log_dir = log_dir
         self._writer = EventFileWriter(log_dir, flush_secs=flush_secs)
         self.board_url: str | None = None
-        if board and os.environ.get("TUFFRL_BOARD", "1") != "0" and _is_rank_zero():
+        if board and os.environ.get("TUFFBIRD_BOARD", "1") != "0" and _is_rank_zero():
             self.board_url = ensure_board(os.path.dirname(os.path.abspath(log_dir)), open_browser=open_browser)
 
     def add_scalar(self, tag: str, scalar_value: Any, global_step: int | None = None, walltime: float | None = None, **_: Any) -> None:

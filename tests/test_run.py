@@ -9,7 +9,7 @@ import sys
 import pytest
 from helpers import quiet_run, read_events, values_of
 
-from tuffrl.events import HParamsEnd, HParamsStart, Scalar, Text
+from tuffbird.events import HParamsEnd, HParamsStart, Scalar, Text
 
 
 def test_run_writes_metrics_config_and_end(tmp_path):
@@ -39,12 +39,12 @@ def test_finish_twice_writes_one_end(tmp_path):
 @pytest.mark.parametrize(("raised", "status"), [("RuntimeError", "failure"), ("KeyboardInterrupt", "unknown")])
 def test_a_script_that_dies_records_why(tmp_path, raised, status):
     script = (
-        "import tuffrl\n"
-        f"tuffrl.init(logdir={str(tmp_path)!r}, name='run', board=False, system_metrics=False)\n"
+        "import tuffbird\n"
+        f"tuffbird.init(logdir={str(tmp_path)!r}, name='run', board=False, system_metrics=False)\n"
         "print('before the end')\n"
         f"raise {raised}('boom')\n"
     )
-    result = subprocess.run([sys.executable, "-c", script], capture_output=True, text=True, env={**os.environ, "TUFFRL_BOARD": "0"})
+    result = subprocess.run([sys.executable, "-c", script], capture_output=True, text=True, env={**os.environ, "TUFFBIRD_BOARD": "0"})
     assert result.returncode != 0
 
     events = read_events(tmp_path, "run")
