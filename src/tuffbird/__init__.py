@@ -15,6 +15,7 @@ __version__ = "0.1.1"
 
 from .board import ensure_board  # noqa: E402 - needs __version__ above
 from .compat import SummaryWriter  # noqa: E402
+from .experiment import BY_DIRECTORY, Experiment, load  # noqa: E402
 from .run import Run  # noqa: E402
 
 _current: Run | None = None
@@ -50,4 +51,4 @@ def board(logdir: str = "logs", **options: Any) -> str | None:
     return ensure_board(logdir, **options)
 
 
-__all__ = ["Run", "SummaryWriter", "__version__", "board", "finish", "init", "log"]
+__all__ = ["BY_DIRECTORY", "Experiment", "Run", "SummaryWriter", "__version__", "board", "finish", "init", "load", "log"]

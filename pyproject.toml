@@ -5,13 +5,13 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "tuff-bird"
 dynamic = ["version"]
-description = "Training logs as TensorBoard event files, and a live board that follows them"
+description = "Training logs as TensorBoard event files, a live board that follows them, and figures and charts made from them"
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [{ name = "TalexDreamSoul" }]
-keywords = ["reinforcement-learning", "tensorboard", "tfevents", "experiment-tracking", "training-dashboard", "machine-learning"]
+keywords = ["reinforcement-learning", "tensorboard", "tfevents", "experiment-tracking", "training-dashboard", "machine-learning", "jupyter", "matplotlib"]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Environment :: Web Environment",
@@ -40,6 +40,10 @@ Changelog = "https://github.com/talex-touch/tuff-bird/blob/main/CHANGELOG.md"
 [project.optional-dependencies]
 # Process and machine metrics; without it the board records only what the standard library sees.
 system = ["psutil>=5.9"]
+# Figures for papers: Experiment.plot and `tuff-bird plot` to PDF, SVG or PNG.
+plot = ["matplotlib>=3.7", "numpy>=1.22"]
+# The chart in a notebook, following runs while they write; the picture inside saved charts needs [plot].
+notebook = ["anywidget>=0.9", "tuff-bird[plot]"]
 dev = ["pytest>=8.0", "tensorboard>=2.15", "tensorboardX>=2.6"]
 
 [project.scripts]
@@ -50,7 +54,7 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 # Built from web/ (pnpm build) before packaging; the release workflow checks it is there.
-tuffbird = ["board/static/**/*"]
+tuffbird = ["board/static/**/*", "charts/static/*"]
 
 [tool.setuptools.dynamic]
 version = { attr = "tuffbird.__version__" }

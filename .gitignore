@@ -11,4 +11,5 @@ runs/
 web/node_modules/
 web/dist/
 src/tuffbird/board/static/
+src/tuffbird/charts/static/
 .DS_Store

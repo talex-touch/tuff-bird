@@ -3,6 +3,7 @@ import type { LearningCurveRun } from '@talex-touch/tuffex/charts/src/learning-c
 import { TxLearningCurve } from '@talex-touch/tuffex/charts/src/learning-curve'
 import { TxSkeleton } from '@talex-touch/tuffex/skeleton'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { chartCode, copyText } from '../chart-code'
 import { formatCount, formatDuration, formatValue } from '../format'
 import { t } from '../i18n'
 import { colorOf, groups, prefs, runLabels, seriesKeyOf, seriesOf, tagVersion, ui, visibleRuns } from '../store'
@@ -16,6 +17,19 @@ const props = defineProps<{
 
 const expanded = ref(false)
 const height = computed(() => (expanded.value ? 380 : 220))
+
+/** What the last copy did, shown on the button for a moment. */
+const copied = ref<'done' | 'failed' | null>(null)
+let copiedTimer: number | undefined
+const copyLabel = computed(() => (copied.value === 'done' ? t.copied : copied.value === 'failed' ? t.copyFailed : t.copyCode))
+
+async function copyCode(): Promise<void> {
+  copied.value = (await copyText(chartCode(props.tag))) ? 'done' : 'failed'
+  window.clearTimeout(copiedTimer)
+  copiedTimer = window.setTimeout(() => {
+    copied.value = null
+  }, 1600)
+}
 
 const groupLabels = computed(() => new Map(groups.value.map(group => [`group:${group.key}`, group.label])))
 
@@ -78,7 +92,10 @@ onMounted(() => {
   observer.observe(element)
 })
 
-onBeforeUnmount(() => observer?.disconnect())
+onBeforeUnmount(() => {
+  observer?.disconnect()
+  window.clearTimeout(copiedTimer)
+})
 </script>
 
 <template>
@@ -88,18 +105,37 @@ onBeforeUnmount(() => observer?.disconnect())
         {{ title }}
       </h3>
       <span v-if="title !== tag" class="card__tag mono">{{ tag }}</span>
-      <button
-        class="card__expand"
-        type="button"
-        :aria-pressed="expanded"
-        :aria-label="expanded ? 'collapse' : 'expand'"
-        @click="expanded = !expanded"
-      >
-        <svg viewBox="0 0 16 16" aria-hidden="true">
-          <path v-if="expanded" d="M6 2v4H2M10 14v-4h4M6 6 2 2M10 10l4 4" />
-          <path v-else d="M10 2h4v4M6 14H2v-4M14 2 9.5 6.5M2 14l4.5-4.5" />
-        </svg>
-      </button>
+      <div class="card__actions">
+        <!-- System metrics are drawn against time, which tuffbird's plot() and chart() do not do. -->
+        <button
+          v-if="!system"
+          class="card__action"
+          :class="{ 'is-shown': copied }"
+          type="button"
+          :title="copyLabel"
+          :aria-label="copyLabel"
+          @click="copyCode"
+        >
+          <svg viewBox="0 0 16 16" aria-hidden="true">
+            <path v-if="copied === 'done'" d="M3 8.5 6.5 12 13 4.5" />
+            <path v-else-if="copied === 'failed'" d="M4 4l8 8M12 4l-8 8" />
+            <path v-else d="M5.5 4.5 2 8l3.5 3.5M10.5 4.5 14 8l-3.5 3.5" />
+          </svg>
+        </button>
+        <button
+          class="card__action"
+          :class="{ 'is-shown': expanded }"
+          type="button"
+          :aria-pressed="expanded"
+          :aria-label="expanded ? 'collapse' : 'expand'"
+          @click="expanded = !expanded"
+        >
+          <svg viewBox="0 0 16 16" aria-hidden="true">
+            <path v-if="expanded" d="M6 2v4H2M10 14v-4h4M6 6 2 2M10 10l4 4" />
+            <path v-else d="M10 2h4v4M6 14H2v-4M14 2 9.5 6.5M2 14l4.5-4.5" />
+          </svg>
+        </button>
+      </div>
     </header>
     <TxLearningCurve
       v-if="seen"
@@ -161,13 +197,19 @@ onBeforeUnmount(() => observer?.disconnect())
   white-space: nowrap;
 }
 
-.card__expand {
+.card__actions {
+  display: flex;
+  flex: none;
+  gap: 2px;
+  margin: -4px -6px 0 auto;
+}
+
+.card__action {
   display: grid;
   flex: none;
   place-items: center;
   width: 24px;
   height: 24px;
-  margin: -4px -6px 0 auto;
   padding: 0;
   color: var(--board-muted);
   cursor: pointer;
@@ -178,18 +220,18 @@ onBeforeUnmount(() => observer?.disconnect())
   transition: opacity 0.15s ease, background-color 0.15s ease;
 }
 
-.card:hover .card__expand,
-.card__expand:focus-visible,
-.card.is-expanded .card__expand {
+.card:hover .card__action,
+.card__action:focus-visible,
+.card__action.is-shown {
   opacity: 1;
 }
 
-.card__expand:hover {
+.card__action:hover {
   color: var(--tx-text-color-primary);
   background: var(--tx-fill-color-light);
 }
 
-.card__expand svg {
+.card__action svg {
   width: 14px;
   height: 14px;
   fill: none;

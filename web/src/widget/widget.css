@@ -1,0 +1,112 @@
+/* The chart's own styles. They and TuffEx's sit in the chart's shadow root, where the build rewrites
+   TuffEx's :root and html selectors to .tb-root, so the host page's styles stay out and the chart's
+   stay in. */
+
+/* Inherited properties still cross into a shadow root; custom properties do too, but .tb-root sets its own. */
+:host {
+  all: initial;
+  display: block;
+}
+
+.tb-root {
+  font-family: var(--tx-font-family);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--tx-text-color-primary);
+  color-scheme: light;
+  -webkit-font-smoothing: antialiased;
+}
+
+.tb-root.dark {
+  color-scheme: dark;
+}
+
+.tb-root *,
+.tb-root *::before,
+.tb-root *::after {
+  box-sizing: border-box;
+}
+
+.tb-root button {
+  font: inherit;
+}
+
+.tb-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tb-chart__head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  align-items: center;
+}
+
+.tb-chart__title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.tb-chart__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+
+.tb-chart__panels {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr));
+  gap: 10px;
+}
+
+.tb-chart__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  padding: 12px 14px 10px;
+  background: var(--tx-bg-color);
+  border: 1px solid var(--tx-border-color-lighter);
+  border-radius: 12px;
+}
+
+.tb-chart__tag {
+  margin: 0;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tb-chart__smoothing {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--tx-text-color-regular);
+  white-space: nowrap;
+}
+
+.tb-chart__slider {
+  width: 120px;
+}
+
+.tb-chart__value {
+  width: 30px;
+  font-family: var(--tx-font-family-mono);
+  color: var(--tx-text-color-secondary);
+}
+
+.tb-chart__notice {
+  margin: 0;
+  padding: 7px 10px;
+  font-size: 12px;
+  color: var(--tx-text-color-regular);
+  background: var(--tx-fill-color-light);
+  border-radius: 8px;
+}
