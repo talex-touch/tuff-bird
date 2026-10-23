@@ -1,6 +1,6 @@
 # tuff-bird
 
-**Training logs as TensorBoard event files, and a live board that follows them.**
+**Training logs as TensorBoard event files, a live board that follows them, and figures and charts made from them.**
 
 [English](https://github.com/talex-touch/tuff-bird/blob/main/README.md) · [简体中文](https://github.com/talex-touch/tuff-bird/blob/main/README.zh.md)
 
@@ -15,13 +15,16 @@ One call in a training script writes everything about the run into TensorBoard e
 under `logs/`: the metrics, the config, what the script prints, and the CPU, memory and GPU
 it used. The same call starts a board in your browser that follows those files as they grow.
 `tensorboard --logdir logs` opens the same files, and the board opens directories that
-TensorBoard, tensorboardX or PyTorch wrote. The package has no dependencies.
+TensorBoard, tensorboardX or PyTorch wrote. The package has no dependencies; figures for papers
+and charts in notebooks come with optional extras.
 
 ## Install
 
 ```bash
 pip install tuff-bird
-pip install "tuff-bird[system]"   # adds CPU and memory metrics, through psutil
+pip install "tuff-bird[system]"     # adds CPU and memory metrics, through psutil
+pip install "tuff-bird[plot]"       # adds figures for papers, through matplotlib
+pip install "tuff-bird[notebook]"   # adds the live chart in Jupyter, through anywidget; includes [plot]
 ```
 
 ## Quick start
@@ -71,7 +74,81 @@ in parallel. It takes about 35 seconds.
 
 Charts smooth with an exponential moving average and can also show the raw values and a log
 x-axis. Drag across a chart to zoom in, and double-click it to zoom back out. The board
-follows the system's light or dark theme.
+follows the system's light or dark theme. The code button on a chart copies the Python that
+draws it with the board's settings, as a figure for a paper and as an HTML file.
+
+## Figures for papers
+
+```python
+import tuffbird
+
+exp = tuffbird.load("logs")
+fig = exp.plot("eval/return")   # a matplotlib figure
+fig.savefig("return.pdf")
+print(fig.tuffbird_caption)
+```
+
+Runs in one directory are seeds of one configuration, as on the board. Each curve is their
+mean with a 95% bootstrap confidence interval, the interval estimate that
+[Agarwal et al. (2021)](https://arxiv.org/abs/2108.13264) recommend reporting; their
+interquartile mean is `estimator="iqm"`. A curve stops where its shortest run stops, so its
+end is not an average of fewer runs than its start. `fig.tuffbird_caption` describes the
+figure for its caption:
+
+```text
+Lines: mean across runs (n = 3 per curve). Shaded: 95% bootstrap confidence interval of the mean
+(2,000 resamples). Each run is smoothed with a debiased exponential moving average (weight 0.6)
+before aggregating. Steps stop where the shortest run stops.
+```
+
+| Option | Default | Other values |
+| --- | --- | --- |
+| `group_by` | the runs in one directory | a config key such as `"lr"`, a list of keys, a function of a run, or `None` for one curve per run |
+| `estimator` | `"mean"` | `"iqm"` (interquartile mean) or `"median"` |
+| `band` | `"ci"`, a 95% interval | `"std"`, `"se"`, `"minmax"` or `"none"`; `confidence` sets the interval |
+| `smoothing` | `0.6` | the board's moving-average weight, from 0 to 0.999 |
+| `truncate` | `True` | `False` keeps the steps after the shortest run stops |
+| `raw` | `False` | `True` also draws the values as logged, faintly |
+| `ax` | a new figure | your own axes, one per tag |
+
+PDF files embed their fonts as TrueType and SVG files keep their text as text, so both stay
+editable; PNG files are 300 dpi. The command line draws the same figure and prints its caption:
+
+```bash
+tuff-bird plot logs -t eval/return -o return.pdf
+tuff-bird plot logs -t eval/return -t train/loss --group-by lr --estimator iqm   # writes eval-return_train-loss.pdf
+```
+
+## Interactive charts
+
+```python
+exp.chart("eval/return").save("return.html")   # the board's chart in one file
+exp.show("eval/return")                         # in a notebook, live while the runs write
+```
+
+A chart is the board's own: hover for values, click a legend entry to hide its curve, and
+move the smoothing slider. A saved file carries the chart's script (about 110 KB) and its
+data, so it opens offline in any browser. `tuff-bird plot logs -t eval/return -o return.html`
+writes the same file.
+
+In a notebook, `show()` follows the runs while they write. A widget updates every second from
+a background thread, so training can run in the same kernel. Once every run has stopped for
+30 seconds, the widget is replaced by the saved chart, which holds a picture of itself for
+places that run no scripts, such as an untrusted notebook. A notebook saved after that keeps
+the interactive chart without a kernel. When no run is writing, `show()` shows the saved
+chart at once. Pass `live=True` to follow runs that have not started yet, and call `.stop()`
+on what `show()` returns to save the chart as it is.
+
+Notebook charts are tested in JupyterLab 4.6; VS Code, Colab and GitHub's notebook view are
+not tested yet. Known limits:
+
+- Only the page that showed the chart receives the saved chart. A page opened or reloaded
+  later keeps the live widget, which says so; run `show()` again to save the chart in the
+  notebook.
+- While a cell is running, a reloaded page shows "Loading widget..." until the cell finishes,
+  because JupyterLab restores widgets through the kernel.
+- The kernel keeps every point the widget has drawn until the cell runs again or the kernel
+  restarts.
 
 ## Training on another machine
 
@@ -89,8 +166,9 @@ listening on another address shows your logs and config to anyone who can reach 
 ## Command line and settings
 
 ```bash
-tuff-bird board logs   # serve a log directory, including one TensorBoard wrote
-tuff-bird stop logs    # stop the board serving it
+tuff-bird board logs                      # serve a log directory, including one TensorBoard wrote
+tuff-bird stop logs                       # stop the board serving it
+tuff-bird plot logs -t loss -o loss.pdf   # a figure; -o loss.html writes the interactive chart
 ```
 
 | Variable | Effect |
@@ -114,17 +192,21 @@ tuff-bird stop logs    # stop the board serving it
 - **One board per log directory.** `logs/.tuffbird/board.json` records which board serves the
   directory. Scripts starting at the same moment agree on one of them to launch it, and the
   board keeps running after training ends until `tuff-bird stop`.
+- **Figures and charts.** `tuffbird.load()` reads a log directory with the board's reader and
+  groups runs as the board does. Figures are drawn with matplotlib. A saved chart is the
+  board's chart (Vue and TuffEx) built as one ES module and packed into the page with the
+  chart's data; in a notebook, the same module runs as an anywidget.
 
 ## Status
 
-0.1 is an alpha. The board reads images and audio but does not show them yet; that and the
+0.2 is an alpha. The board reads images and audio but does not show them yet; that and the
 rest of the plan are in the [roadmap issues](https://github.com/talex-touch/tuff-bird/issues?q=is%3Aissue+label%3Aroadmap).
 
 ## Development
 
 ```bash
-cd web && pnpm install && pnpm build && cd ..   # builds the board page into src/tuffbird/board/static
-pip install -e ".[dev,system]"
+cd web && pnpm install && pnpm build && cd ..   # builds the board page and the chart script into src/tuffbird
+pip install -e ".[dev,system,plot,notebook]"
 python -m pytest
 uvx ruff check .
 ```
