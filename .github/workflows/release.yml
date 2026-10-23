@@ -24,13 +24,14 @@ jobs:
       - uses: ./.github/actions/build-board
       - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
       - run: uv build
-      - name: The wheel ships the board page
+      - name: The wheel ships the board page and the chart script
         run: |
           python3 - <<'PY'
           import glob, zipfile
           [wheel] = glob.glob("dist/*.whl")
           names = zipfile.ZipFile(wheel).namelist()
           assert "tuffbird/board/static/index.html" in names, names
+          assert "tuffbird/charts/static/widget.js" in names, names
           print(wheel, len(names), "files")
           PY
       - uses: actions/upload-artifact@v7

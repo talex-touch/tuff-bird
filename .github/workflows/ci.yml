@@ -36,18 +36,18 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python }}
-      - run: python -m pip install -e ".[dev,system]"
+      - run: python -m pip install -e ".[dev,system,plot,notebook]"
       - run: python -m pytest -q
 
   package:
-    name: board page and package
+    name: board page, chart script and package
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/build-board
       - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
       - run: uv build
-      - name: The wheel ships the board page
+      - name: The wheel ships the board page and the chart script
         run: |
           python3 - <<'PY'
           import glob, zipfile
@@ -55,6 +55,7 @@ jobs:
           names = zipfile.ZipFile(wheel).namelist()
           assert "tuffbird/board/static/index.html" in names, names
           assert any(name.startswith("tuffbird/board/static/assets/") for name in names), names
+          assert "tuffbird/charts/static/widget.js" in names, names
           print(wheel, len(names), "files")
           PY
       - name: The installed board serves its page
@@ -66,3 +67,8 @@ jobs:
           for attempt in $(seq 1 40); do curl -sf http://127.0.0.1:6066/api/health && break; sleep 0.5; done
           curl -sf http://127.0.0.1:6066/ | grep -q '<title>tuff-bird</title>'
           /tmp/smoke/bin/tuff-bird stop /tmp/smoke-logs
+      - name: The installed package saves a chart without the optional dependencies
+        run: |
+          /tmp/smoke/bin/python -c "import tuffbird; run = tuffbird.init('/tmp/smoke-logs', name='run', board=False, capture_output=False, system_metrics=False); run.log({'loss': 1.0}, step=0); run.finish()"
+          /tmp/smoke/bin/tuff-bird plot /tmp/smoke-logs -t loss -o /tmp/smoke/loss.html
+          grep -q 'class="tuffbird-chart__code"' /tmp/smoke/loss.html
