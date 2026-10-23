@@ -4,6 +4,29 @@ All notable changes to tuff-bird are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow
 [Semantic Versioning](https://semver.org/).
 
+## [0.2.0] - 2026-10-23
+
+Figures for papers, and the board's chart outside the board: in one HTML file and live in Jupyter.
+
+### Added
+
+- `tuffbird.load(logdir)` reads a log directory back as an `Experiment`: its runs, tags and
+  scalars, and its curves, with runs grouped as the board groups them, by config keys, by a
+  function, or not at all.
+- `Experiment.plot()` and `tuff-bird plot`: a matplotlib figure with a panel per tag. Each curve
+  is the mean across its runs with a 95% bootstrap confidence interval, over the steps every run
+  reached; the interquartile mean, the median and other bands are options. PDF and SVG files keep
+  their text editable, and the figure comes with a caption that says what it shows. Needs
+  `tuff-bird[plot]`.
+- `Experiment.chart()`: the board's interactive chart, with a smoothing slider, in one HTML file
+  that opens offline (`tuff-bird plot -o chart.html`) or as a notebook output.
+- `Experiment.show()`: in Jupyter, the chart follows the runs while they write, then turns into
+  the saved chart, with a picture inside for places that run no scripts. Needs
+  `tuff-bird[notebook]`.
+- The board: a button on each chart copies the Python that draws it with the board's settings.
+- The optional extras `[plot]` (matplotlib and numpy) and `[notebook]` (anywidget, with
+  `[plot]`). The package itself still has no dependencies.
+
 ## [0.1.1] - 2026-10-21
 
 The project is renamed to tuff-bird. The tuff-rl 0.1.0 release stays on PyPI as it was
@@ -34,5 +57,6 @@ The first release, published under the name tuff-rl.
 - `tuff-rl board` and `tuff-rl stop` on the command line.
 - `examples/cartpole.py`: REINFORCE on CartPole in plain Python, six runs in parallel.
 
+[0.2.0]: https://github.com/talex-touch/tuff-bird/releases/tag/v0.2.0
 [0.1.1]: https://github.com/talex-touch/tuff-bird/releases/tag/v0.1.1
 [0.1.0]: https://github.com/talex-touch/tuff-bird/releases/tag/v0.1.0
