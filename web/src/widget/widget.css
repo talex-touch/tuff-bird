@@ -56,9 +56,11 @@
   gap: 4px 16px;
 }
 
+/* auto-fit: fewer panels than fit in a row share all of it, so one panel is as wide as the head
+   that holds the smoothing slider. */
 .tb-chart__panels {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
   gap: 10px;
 }
 
