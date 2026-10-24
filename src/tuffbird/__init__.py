@@ -11,7 +11,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 from .board import ensure_board  # noqa: E402 - needs __version__ above
 from .compat import SummaryWriter  # noqa: E402

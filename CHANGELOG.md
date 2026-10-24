@@ -4,6 +4,18 @@ All notable changes to tuff-bird are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow
 [Semantic Versioning](https://semver.org/).
 
+## [0.2.1] - 2026-10-23
+
+Two fixes to what 0.2.0 draws.
+
+### Fixed
+
+- A chart with fewer panels than fit in a row spreads them across it, so a chart of one tag is
+  as wide as its output and its smoothing slider sits over it, in a saved page and in Jupyter.
+- A figure's caption says that the steps stop where the shortest run stops only when steps were
+  dropped. `Summary.truncated` is now true only then, and `Summary.disjoint` tells when the runs
+  share no steps.
+
 ## [0.2.0] - 2026-10-23
 
 Figures for papers, and the board's chart outside the board: in one HTML file and live in Jupyter.
@@ -57,6 +69,7 @@ The first release, published under the name tuff-rl.
 - `tuff-rl board` and `tuff-rl stop` on the command line.
 - `examples/cartpole.py`: REINFORCE on CartPole in plain Python, six runs in parallel.
 
+[0.2.1]: https://github.com/talex-touch/tuff-bird/releases/tag/v0.2.1
 [0.2.0]: https://github.com/talex-touch/tuff-bird/releases/tag/v0.2.0
 [0.1.1]: https://github.com/talex-touch/tuff-bird/releases/tag/v0.1.1
 [0.1.0]: https://github.com/talex-touch/tuff-bird/releases/tag/v0.1.0
