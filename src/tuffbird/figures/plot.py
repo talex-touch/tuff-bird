@@ -113,7 +113,7 @@ def plot(
                     curve.seeds, smoothing=smoothing, estimator=estimator, band=band, truncate=truncate,
                     confidence=confidence, resamples=resamples, max_points=max_points,
                 )
-                if truncate and summary.runs > 1 and not summary.truncated:
+                if summary.disjoint:
                     warnings.warn(f"{tag}: the runs of {curve.label} share no steps, so its curve keeps every step", stacklevel=2)
                 any_truncated = any_truncated or summary.truncated
                 color = hex_color(curve.color)

@@ -34,8 +34,10 @@ class Summary:
     #: How many runs have a value at each step.
     count: np.ndarray
     runs: int
-    #: Whether the steps were cut to the range every run reached.
+    #: Whether steps were dropped to keep to the range every run reached.
     truncated: bool
+    #: Whether the runs share no range of steps, so the curve keeps every step.
+    disjoint: bool = False
 
 
 def smooth_ema(values: Sequence[float] | np.ndarray, weight: float) -> np.ndarray:
@@ -88,12 +90,14 @@ def summarize(
 
     smoothed = [smooth_ema(values, smoothing) for _, values in series]
     steps = np.unique(np.concatenate([run_steps for run_steps, _ in series]))
-    truncated = False
+    truncated = disjoint = False
     if truncate and len(series) > 1:
         first = max(run_steps[0] for run_steps, _ in series)
         last = min(run_steps[-1] for run_steps, _ in series)
         shared = steps[(steps >= first) & (steps <= last)]
-        if shared.size:
+        if not shared.size:
+            disjoint = True
+        elif shared.size < steps.size:
             steps = shared
             truncated = True
     if max_points and steps.size > max_points:
@@ -117,7 +121,7 @@ def summarize(
                 low, high = center - spread, center + spread
             else:
                 low, high = np.nanmin(smooth, axis=0), np.nanmax(smooth, axis=0)
-    return Summary(steps, center, low, high, _estimate(raw, estimator), count, len(series), truncated)
+    return Summary(steps, center, low, high, _estimate(raw, estimator), count, len(series), truncated, disjoint)
 
 
 def _ordered(points: Sequence[tuple[float, float]]) -> tuple[np.ndarray, np.ndarray]:

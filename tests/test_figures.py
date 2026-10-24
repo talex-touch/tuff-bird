@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import warnings
+
 import pytest
 from helpers import logged_run
 
@@ -59,6 +61,8 @@ def test_by_default_the_steps_stop_where_the_shortest_run_stops():
     # Past the shortest run, the estimate is of the one run left.
     assert kept.center.tolist() == [2.0] * 5 + [1.0] * 5
     assert kept.count.tolist() == [2] * 5 + [1] * 5
+    # Runs that stop together lose no steps.
+    assert not summarize([long, long], smoothing=0).truncated
 
 
 def test_one_run_has_no_band():
@@ -164,6 +168,17 @@ def test_a_curve_whose_runs_share_no_steps_keeps_them_all_and_says_so(tmp_path):
     logged_run(tmp_path, "seed-2", [(5, 1.0), (6, 1.0)], group="sac")
     with pytest.warns(UserWarning, match="share no steps"):
         figure = tuffbird.load(tmp_path).plot("loss")
+    assert "shortest run" not in figure.tuffbird_caption
+
+
+def test_a_caption_says_nothing_of_the_shortest_run_when_the_runs_stop_together(tmp_path):
+    for seed in (1, 2):
+        logged_run(tmp_path, f"seed-{seed}", [(step, float(step * seed)) for step in range(4)], group="sac")
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        figure = tuffbird.load(tmp_path).plot("loss")
+    assert not [warning for warning in caught if "share no steps" in str(warning.message)]
+    assert figure.tuffbird_caption.startswith("Lines: mean across runs (n = 2 per curve).")
     assert "shortest run" not in figure.tuffbird_caption
 
 
